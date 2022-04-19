@@ -109,7 +109,7 @@ class CoattentionNet(nn.Module):
     """
     def __init__(self):
         super().__init__()
-        ############ 3.3 TODO
+        # ----------------- 3.3 TODO
         self.ques_feat_layer = None
 
         self.word_attention_layer = None
@@ -123,10 +123,10 @@ class CoattentionNet(nn.Module):
         self.dropout = None # please refer to the paper about when you should use dropout
 
         self.classifier = None
-        ############ 
+        # ----------------- 
 
     def forward(self, image_feat, question_encoding):
-        ############ 3.3 TODO
+        # ----------------- 3.3 TODO
         # 1. extract hierarchical question
         pass
     
@@ -139,5 +139,5 @@ class CoattentionNet(nn.Module):
         # 4. predict the final answer using the fused feature
         pass
 
-        ############ 
+        # ----------------- 
         raise NotImplementedError()

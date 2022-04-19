@@ -36,6 +36,8 @@ class GoogLeNet(nn.Module):
 
     def __init__(self, num_classes=1000, aux_logits=True, transform_input=False, init_weights=True):
         super(GoogLeNet, self).__init__()
+
+        self.training = False
         self.aux_logits = aux_logits
         self.transform_input = transform_input
 
@@ -131,14 +133,14 @@ class GoogLeNet(nn.Module):
 
         x = self.avgpool(x)
         # N x 1024 x 1 x 1
-        x = x.view(x.size(0), -1)
+        prefinal = x.view(x.size(0), -1)
         # N x 1024
-        x = self.dropout(x)
+        x = self.dropout(prefinal)
         x = self.fc(x)
         # N x 1000 (num_classes)
         if self.training and self.aux_logits:
-            return aux1, aux2, x
-        return x
+            return aux1, aux2, x, prefinal
+        return x, prefinal
 
 
 class Inception(nn.Module):

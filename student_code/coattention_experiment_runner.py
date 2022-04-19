@@ -2,9 +2,9 @@ import os
 import torch
 import torch.nn as nn
 
-from student_code.coattention_net import CoattentionNet
-from student_code.experiment_runner_base import ExperimentRunnerBase
-from student_code.vqa_dataset import VqaDataset
+from coattention_net import CoattentionNet
+from experiment_runner_base import ExperimentRunnerBase
+from vqa_dataset import VqaDataset
 
 
 class CoattentionNetExperimentRunner(ExperimentRunnerBase):
@@ -15,9 +15,9 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
                  test_image_dir, test_question_path,test_annotation_path, batch_size, num_epochs,
                  num_data_loader_workers, cache_location, lr, log_validation):
 
-        ############ 3.1 TODO: set up transform
+        # ----------------- 3.1 TODO: set up transform
         transform = None
-        ############ 
+        # ----------------- 
         res18 = torch.hub.load('pytorch/vision:v0.9.0', 'resnet18', pretrained=True)
         image_encoder = nn.Sequential(*list(res18.children())[:-2])
         image_encoder.eval()
@@ -35,11 +35,12 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
                                    question_word_list_length=question_word_list_length,
                                    answer_list_length=answer_list_length,
                                    cache_location=os.path.join(cache_location, "tmp_train"),
-                                   ############ 3.1 TODO: fill in the arguments
+                                   # ----------------- 3.1 TODO: fill in the arguments
                                    question_word_to_id_map='change this argument',
                                    answer_to_id_map='change this argument',
-                                   ############
+                                   # -----------------
                                    pre_encoder=image_encoder)
+
         val_dataset = VqaDataset(image_dir=test_image_dir,
                                  question_json_file_path=test_question_path,
                                  annotation_json_file_path=test_annotation_path,
@@ -48,10 +49,10 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
                                  question_word_list_length=question_word_list_length,
                                  answer_list_length=answer_list_length,
                                  cache_location=os.path.join(cache_location, "tmp_val"),
-                                 ############ 3.1 TODO: fill in the arguments
+                                 # ----------------- 3.1 TODO: fill in the arguments
                                  question_word_to_id_map='change this argument',
                                  answer_to_id_map='change this argument',
-                                 ############
+                                 # -----------------
                                  pre_encoder=image_encoder)
 
         self._model = CoattentionNet()
@@ -59,14 +60,14 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
         super().__init__(train_dataset, val_dataset, self._model, batch_size, num_epochs,
                          num_data_loader_workers=num_data_loader_workers, log_validation=False)
 
-        ############ 3.4 TODO: set up optimizer
+        # ----------------- 3.4 TODO: set up optimizer
 
 
-        ############ 
+        # ----------------- 
 
     def _optimize(self, predicted_answers, true_answer_ids):
-        ############ 3.4 TODO: implement the optimization step
+        # ----------------- 3.4 TODO: implement the optimization step
         
         
-        ############ 
+        # ----------------- 
         raise NotImplementedError()

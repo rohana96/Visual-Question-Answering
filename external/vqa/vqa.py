@@ -47,6 +47,7 @@ class VQA:
     def createIndex(self):
         # create index
         print('creating index...')
+
         imgToQA = {ann['image_id']: [] for ann in self.dataset['annotations']}
         qa = {ann['question_id']: [] for ann in self.dataset['annotations']}
         qqa = {ann['question_id']: [] for ann in self.dataset['annotations']}
@@ -86,7 +87,8 @@ class VQA:
             anns = self.dataset['annotations']
         else:
             if not len(imgIds) == 0:
-                anns = sum([self.imgToQA[imgId] for imgId in imgIds if imgId in self.imgToQA], [])
+                # anns = sum([self.imgToQA[imgId] for imgId in imgIds if imgId in self.imgToQA], [])
+                anns = [self.imgToQA[imgId] for imgId in imgIds if imgId in self.imgToQA]
             else:
                 anns = self.dataset['annotations']
             anns = anns if len(quesTypes) == 0 else [ann for ann in anns if ann['question_type'] in quesTypes]
@@ -110,7 +112,7 @@ class VQA:
             anns = self.dataset['annotations']
         else:
             if not len(quesIds) == 0:
-                anns = sum([self.qa[quesId] for quesId in quesIds if quesId in self.qa], [])
+                anns = sum([ self.qa[quesId] for quesId in quesIds if quesId in self.qa], [])
             else:
                 anns = self.dataset['annotations']
             anns = anns if len(quesTypes) == 0 else [ann for ann in anns if ann['question_type'] in quesTypes]

@@ -1,6 +1,8 @@
 import argparse
-from student_code.simple_baseline_experiment_runner import SimpleBaselineExperimentRunner
-from student_code.coattention_experiment_runner import CoattentionNetExperimentRunner
+import sys
+sys.path.append('../../VQA')
+from simple_baseline_experiment_runner import SimpleBaselineExperimentRunner
+from coattention_experiment_runner import CoattentionNetExperimentRunner
 
 
 if __name__ == "__main__":
@@ -14,8 +16,8 @@ if __name__ == "__main__":
     parser.add_argument('--test_question_path', type=str)
     parser.add_argument('--test_annotation_path', type=str)
     parser.add_argument('--batch_size', type=int, default=100)
-    parser.add_argument('--num_epochs', type=int, default=100)
-    parser.add_argument('--num_data_loader_workers', type=int, default=10)
+    parser.add_argument('--num_epochs', type=int, default=10)
+    parser.add_argument('--num_data_loader_workers', type=int, default=8)
     parser.add_argument('--cache_location', type=str, default="")
     parser.add_argument('--lr', type=float, default=4e-4)
     parser.add_argument('--log_validation', action='store_true')
@@ -41,3 +43,16 @@ if __name__ == "__main__":
                                                 lr=args.lr,
                                                 log_validation=args.log_validation)
     experiment_runner.train()
+
+
+
+"""
+Usage: python student_code/main.py --model simple --train_image_dir data/train2014 \
+--train_question_path data/MultipleChoice_mscoco_train2014_questions.json \
+--train_annotation_path data/mscoco_train2014_annotations.json \
+--test_image_dir data/val2014 \
+--test_question_path data/MultipleChoice_mscoco_val2014_questions.json \
+--test_annotation_path data/mscoco_val2014_annotations.json \
+--log_validation
+
+"""

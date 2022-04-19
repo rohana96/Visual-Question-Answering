@@ -78,10 +78,19 @@ where `annotation_json_file_path` and `question_json_file_path` are paths to `ms
 
 **1.1 Which member function of the `VQA` class returns the IDs of all questions in this dataset? How many IDs are there?**
 
+Ans: getQuesIds()
+
 **1.2 What is the content of the question of ID `409380`? What is the ID of the image associated with this question?**
     Hint for later tasks: This image ID can be padded with 0s (and prefix and suffix) to obtain the image file name.
 
+{'question': 'What position is the man squatting with a glove on playing?', 
+ 'image_id': 40938, 
+ 'question_id': 409380} 
+
 **1.3 What is the mostly voted answer for this question?**
+
+catcher
+
 
 ### Prepare the dataset for PyTorch
 
