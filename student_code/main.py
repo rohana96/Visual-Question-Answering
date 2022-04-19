@@ -1,3 +1,14 @@
+"""
+Usage: python student_code/main.py --model simple --train_image_dir data/train2014 \
+--train_question_path data/MultipleChoice_mscoco_train2014_questions.json \
+--train_annotation_path data/mscoco_train2014_annotations.json \
+--test_image_dir data/val2014 \
+--test_question_path data/MultipleChoice_mscoco_val2014_questions.json \
+--test_annotation_path data/mscoco_val2014_annotations.json \
+--log_validation
+
+"""
+
 import argparse
 import sys
 sys.path.append('../../VQA')
@@ -46,13 +57,3 @@ if __name__ == "__main__":
 
 
 
-"""
-Usage: python student_code/main.py --model simple --train_image_dir data/train2014 \
---train_question_path data/MultipleChoice_mscoco_train2014_questions.json \
---train_annotation_path data/mscoco_train2014_annotations.json \
---test_image_dir data/val2014 \
---test_question_path data/MultipleChoice_mscoco_val2014_questions.json \
---test_annotation_path data/mscoco_val2014_annotations.json \
---log_validation
-
-"""

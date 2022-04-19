@@ -8,6 +8,7 @@ import string
 from collections import Counter
 from tqdm import tqdm
 from torchvision.transforms import transforms
+    
 
 
 class VqaDataset(Dataset):
@@ -32,6 +33,7 @@ class VqaDataset(Dataset):
         self._image_filename_pattern = image_filename_pattern
         self._transform = transform
         self._max_question_length = 26
+        self.visualize = False  # to return PIL images and questions and answers in string format for visualization
 
         # Publicly accessible dataset parameters
         self.question_word_list_length = question_word_list_length + 1  # +1 for 'unknown' category (out of vocab words)
@@ -46,7 +48,7 @@ class VqaDataset(Dataset):
             except OSError:
                 pass
 
-        self.num_images = len(set(os.listdir(self._image_dir)))
+        self.num_images = len(os.listdir(self._image_dir))
         self.num_questions = len(self._vqa.qqa.keys())
         self.index_list = [str(k) for k,_ in self._vqa.qqa.items()]
 
@@ -158,9 +160,9 @@ class VqaDataset(Dataset):
 
     def __len__(self):
         # ----------------- 1.8 TODO
-        return self.num_images
+        return self.num_questions
         # -----------------
-
+        
     def __getitem__(self, idx):
         """
         Load an item of the dataset
@@ -169,12 +171,10 @@ class VqaDataset(Dataset):
         Return:
             A dict containing multiple torch tensors for image, question and answers.
         """
-
         # ----------------- 1.9 TODO
         # figure out the idx-th item of dataset from the VQA API
         if torch.is_tensor(idx):
             idx = idx.tolist()
-        
         fname = self.index_list[idx]
         qid = int(fname)
         image_id = self._vqa.qa[qid]['image_id']
@@ -198,14 +198,14 @@ class VqaDataset(Dataset):
             # load the image from disk, apply self._transform (if not None)
             image_path = os.path.join(
                     self._image_dir, self._image_filename_pattern.format(image_id))
-            image = Image.open(image_path).convert('RGB')
+            image_PIL = Image.open(image_path).convert('RGB')
 
             if self._transform:
                 _transform = self._transform
             else:
                 _transform = transforms.ToTensor()
 
-            image = _transform(image)
+            image = _transform(image_PIL)
             # -----------------
 
         # ----------------- 1.9 TODO
@@ -216,20 +216,30 @@ class VqaDataset(Dataset):
         question_tensor = self._one_hot_encode(question_word_list, self.question_word_to_id_map, self.question_word_list_length)
 
         answer_one_hot_list = []
+        answers = []
         answer_dict_list = self._vqa.qa[qid]['answers']
         for answer_dict in answer_dict_list:
             answer = answer_dict['answer']
+            answers.append(answer)
             answer_one_hot = self._one_hot_encode([answer], self.answer_to_id_map, self.answer_list_length)
             answer_one_hot_list.append(answer_one_hot)
         answers_tensor = torch.cat(answer_one_hot_list, dim=0)
         # -----------------
-        return {
-            'idx': idx,
-            'image': image,
-            'question': question_tensor,
-            'answers': answers_tensor
-        }
+        if not self.visualize:
+            return {
+                'idx': idx,
+                'image': image,
+                'question': question_tensor,
+                'answers': answers_tensor
+            }
 
+        return 
+        {
+            'idx': idx, 
+            'image': image_PIL,
+            'question': question,
+            'answers': answers
+        }
 
 
 

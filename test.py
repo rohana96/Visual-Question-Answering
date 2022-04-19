@@ -60,7 +60,7 @@ def test_VQADataset():
         image_filename_pattern="COCO_train2014_{}.jpg"
         )
 
-    sample = dataset[100]
+    sample = dataset[40500]
     question = sample['question']
     answer = sample['answers']
     print(question.shape)

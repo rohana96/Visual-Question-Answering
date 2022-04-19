@@ -5,6 +5,7 @@ import torch.nn as nn
 from coattention_net import CoattentionNet
 from experiment_runner_base import ExperimentRunnerBase
 from vqa_dataset import VqaDataset
+from torchvision.transforms import transforms
 
 
 class CoattentionNetExperimentRunner(ExperimentRunnerBase):
@@ -16,7 +17,12 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
                  num_data_loader_workers, cache_location, lr, log_validation):
 
         # ----------------- 3.1 TODO: set up transform
-        transform = None
+        transform = transforms.Compose([
+                transforms.Resize((448, 448)),
+                transforms.ToTensor(),
+                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+
+        ])
         # ----------------- 
         res18 = torch.hub.load('pytorch/vision:v0.9.0', 'resnet18', pretrained=True)
         image_encoder = nn.Sequential(*list(res18.children())[:-2])
@@ -36,8 +42,9 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
                                    answer_list_length=answer_list_length,
                                    cache_location=os.path.join(cache_location, "tmp_train"),
                                    # ----------------- 3.1 TODO: fill in the arguments
-                                   question_word_to_id_map='change this argument',
-                                   answer_to_id_map='change this argument',
+                                   question_word_to_id_map=None, 
+                                   answer_to_id_map=None,
+                                   answer_word_list=None,
                                    # -----------------
                                    pre_encoder=image_encoder)
 
@@ -50,8 +57,9 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
                                  answer_list_length=answer_list_length,
                                  cache_location=os.path.join(cache_location, "tmp_val"),
                                  # ----------------- 3.1 TODO: fill in the arguments
-                                 question_word_to_id_map='change this argument',
-                                 answer_to_id_map='change this argument',
+                                 question_word_to_id_map=train_dataset.question_word_to_id_map, 
+                                 answer_to_id_map=train_dataset.answer_to_id_map, 
+                                 answer_word_list=train_dataset.answer_word_list,
                                  # -----------------
                                  pre_encoder=image_encoder)
 
@@ -62,12 +70,24 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
 
         # ----------------- 3.4 TODO: set up optimizer
 
-
+        self.optimizer = torch.optim.RMSprop(self._model.parameters(), lr=4e-4, weight_decay=1e-8, momentum=0.99)
         # ----------------- 
+        self.criterion = torch.nn.CrossEntropyLoss() 
 
     def _optimize(self, predicted_answers, true_answer_ids):
         # ----------------- 3.4 TODO: implement the optimization step
+
         
-        
+        true_answer_ids = torch.mean(true_answer_ids, dim=1)
+        loss = self.criterion(predicted_answers, true_answer_ids)
+
+        self.optimizer.zero_grad()
+        loss.backward()
+        clip_grad_norm_(self._model.parameters(), 20)
+        self.optimizer.step()
+
+        self._model.classifier.weight.data.clamp_(-20, 20)
+        self._model.word_feature_extractor.weight.data.clamp_(-1500, 1500)
+        return loss
         # ----------------- 
-        raise NotImplementedError()
+

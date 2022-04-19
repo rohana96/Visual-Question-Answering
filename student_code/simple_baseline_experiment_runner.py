@@ -1,8 +1,10 @@
 import torch
+import sys
+sys.path.append("./student_code")
 from simple_baseline_net import SimpleBaselineNet
 from experiment_runner_base import ExperimentRunnerBase
 from vqa_dataset import VqaDataset
-from torchvision import transforms
+from torchvision.transforms import transforms
 from torch.nn.utils import clip_grad_norm_
 import sys
 import torch.optim as optim

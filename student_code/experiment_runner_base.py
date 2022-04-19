@@ -4,7 +4,7 @@ import os
 import wandb
 from tqdm import tqdm
 import random
-USE_WANDB = True
+USE_WANDB = False
 step_train = 0
 step_val = 0
 from PIL import Image
@@ -36,11 +36,14 @@ class ExperimentRunnerBase(object):
 
         if USE_WANDB:
             wandb.init(
-                project="vlr_hw4_2",
-                name=f"simple_baseline_1"
+                project="vlr_hw4",
+                name=f"simple_baseline"
             )
+            self.text_table = wandb.Table(columns=["epoch", "val_step", "question",  "image", "pred_answer", "gt_answer", "sample_idx"])
 
-    def _visualize(self, pred_idx, gt_idx, idx):
+    def _visualize(self, idx, pred_idx, gt_idx):
+
+        import pdb; pdb.set_trace()
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
@@ -62,8 +65,16 @@ class ExperimentRunnerBase(object):
 
         #pred_answer
         pred_answer = self.val_dataset.answer_word_list[pred_idx]
-
         return image, question, pred_answer, gt_answer
+        # self.val_dataset.visualize = True
+        # sample = self.val_dataset[idx]
+        # self.val_dataset.visualize = False
+        
+        # image = sample['image']
+        # question = sample['question']
+        # answers = sample['answers']
+        # majority_vote_answer =  Counter(answers).most_common[1][0][0]
+        # return image, question, answer
 
     def _optimize(self, predicted_answers, true_answers):
         """
@@ -101,25 +112,17 @@ class ExperimentRunnerBase(object):
         if self._log_validation:
             # ----------------- 2.9 TODO
             # you probably want to plot something here
-            image, question, pred_answer, gt_answer = self._visualize(idxs[0], pred_idx[0], gt_idx[0])
             print("Epoch: {},  Val loss {}".format(epoch, loss))
+            image, question, pred_answer, gt_answer = self._visualize(idxs[0], pred_idx[0], gt_idx[0])
+            # image, question, pred_answer, gt_answer = self._visualize(idxs)
             # -----------------
             if USE_WANDB:
                 wandb.log({ 
                     "val_loss": loss, 
                     "val_acc" : accuracy,
                     "val_step": step_val,
-                    "visual_sample_idx": idxs[0],
-                    "image": [wandb.Image(image)]
                     })
-
-                text_table = wandb.Table(columns=["epoch", "val_step", "question", "pred_answer", "gt_answer", "image", "sample_idx"])
-                text_table.add_data(epoch, step_val, question, pred_answer, gt_answer, [wandb.Image(image)], idxs[0])
-                
-                wandb.log({
-                        "val_sample" : text_table,
-                        "val_step": step_val
-                        })
+                self.text_table.add_data(epoch, step_val, question, [wandb.Image(image)], pred_answer, gt_answer, idxs[0])
         return accuracy
 
     def train(self):
@@ -163,3 +166,7 @@ class ExperimentRunnerBase(object):
                     # ----------------- 2.9 TODO
                     # you probably want to plot something here
                     # -----------------
+                    # validation accuracy and loss are logged inside validate() method
+        wandb.log({
+            "val_table" : self.text_table,
+            })
