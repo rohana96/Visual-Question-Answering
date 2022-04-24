@@ -138,12 +138,12 @@ predicted answer and ground truth answer (one example per validation is enough).
 
 | Training loss | Validation accuracy |
 | ----- | ------|
-|![](out/simple/train_loss.png)|![](out/simple/val_acc.png)|
+|![](student_code/out/simple/train_loss.png)|![](student_code/out/simple/val_acc.png)|
 
 | Image | Question | Predicted Answer                                                                       | GT answer | 
 | ---- | ------|----------------------------------------------------------------------------------------| ------|
-|![](out/simple/image1.png)|How many zebras are standing?| Epoch 0: 2  <br/> Epoch 1: 2<br/> Epoch 2: 2<br/> Epoch 3: 2<br/> Epoch 4: 2           | 3  |                
-|![](out/simple/image2.png)|Has the woman worn makeup? | Epoch 0: Yes <br/> Epoch 1: Yes <br/> Epoch 2: Yes <br/> Epoch 3: Yes <br/>Epoch 4: No | No |
+|![](student_code/out/simple/image1.png)|How many zebras are standing?| Epoch 0: 2  <br/> Epoch 1: 2<br/> Epoch 2: 2<br/> Epoch 3: 2<br/> Epoch 4: 2           | 3  |                
+|![](student_code/out/simple/image2.png)|Has the woman worn makeup? | Epoch 0: Yes <br/> Epoch 1: Yes <br/> Epoch 2: Yes <br/> Epoch 3: Yes <br/>Epoch 4: No | No |
 
 **2.10 Describe anything special about your implementation in the report. Include your figures of training loss and validation accuracy. Also show
 input, prediction and ground truth in 3 different iterations.**
@@ -246,12 +246,12 @@ validation accuracy. Compare the performance of co-attention network to the simp
 
 | Training loss | Validation accuracy |
 | ----- | ------|
-|![img.png](out/coattention/train_loss.png)|![img.png](out/coattention/val_acc.png)|
+|![img.png](student_code/out/coattention/train_loss.png)|![img.png](student_code/out/coattention/val_acc.png)|
 
 | Image | Question | Predicted Answer                                                                          | GT answer | 
 | ---- | ------|-------------------------------------------------------------------------------------------|-----------|
-|![](out/coattention/image1.png)|How many fences are in the image?| Epoch 0: 2  <br/> Epoch 1: 2<br/> Epoch 2: 2<br/> Epoch 3: 2<br/> Epoch 4: 2              | 2         |                
-|![](out/coattention/image1.png)|What is the fence made out of? | Epoch 0: Wood <br/> Epoch 1: Wood <br/> Epoch 2: Wood <br/> Epoch 3: Wood <br/>Epoch 4: Wood | Wood         |
+|![](student_code/out/coattention/image1.png)|How many fences are in the image?| Epoch 0: 2  <br/> Epoch 1: 2<br/> Epoch 2: 2<br/> Epoch 3: 2<br/> Epoch 4: 2              | 2         |                
+|![](student_code/out/coattention/image1.png)|What is the fence made out of? | Epoch 0: Wood <br/> Epoch 1: Wood <br/> Epoch 2: Wood <br/> Epoch 3: Wood <br/>Epoch 4: Wood | Wood         |
 
 ## Task 4: Custom Network  (20 bonus points)
 
@@ -278,7 +278,7 @@ named file before changing it. Include the training loss and test accuracy graph
   completely though due to time constraints.
 
 Training loss:
-![](out/cosine_coattention/cosine_coattention.png)
+![](student_code/out/cosine_coattention/cosine_coattention.png)
 
 ## Relevant papers
 
