@@ -35,6 +35,8 @@ Model checkpoints and run logs: https://drive.google.com/drive/folders/1cgssoCF1
 --log_validation
 --exp_name cosine_coattention`
 
+## Task 1: Dataset (20 Points)
+
 **1.1 Which member function of the `VQA` class returns the IDs of all questions in this dataset? How many IDs are there?**
 
 -------
@@ -52,10 +54,11 @@ Model checkpoints and run logs: https://drive.google.com/drive/folders/1cgssoCF1
 -------
 
 - Catcher
-- -------
+--------
 
 **1.7 Assign `self.answer_to_id_map` in the `__init__` function. Different from the word-level question embedding, the answer embedding is
 sentence-level (one ID per sentence). Why is it?**
+
 --------
 - The answers should capture more global semantic information and must therefore be encoded at a sentence level. The predicted answer doesn't need
   to match the ground truth answer on a word level because here ordering and context of words matter (for e.g. if "yes" is a correct
@@ -65,6 +68,7 @@ sentence-level (one ID per sentence). Why is it?**
 --------
 **1.8 Implement the `__len__` function of the `VqaDataset` class. Should the size of the dataset equal the number of images, questions or the answers?
 Show your reasoning.**
+
 ---------
 - The size of the dataset should be equal to the number of questions. Since the problem setting here is to predict the answer given an image and a
   corresponding question i.e. `max<sub>&theta;</sub> P<sub>&theta;</sub>(answer | image, question)` it only makes sense to have as many number of data
@@ -78,6 +82,7 @@ Show your reasoning.**
 **3. Create **word-level one-hot encoding** for the question. Make sure that your implementation handles words not in the vocabulary. You also need to
    handle sentences of varying lengths. Check out the `self._max_question_length` parameter in the `__init__` function. How do you handle questions of
    different lengths? Describe in words, what is the dimension of your output tensor?**
+
 ---------
 - Handling sentences of varying length: For every question, I truncate it to `self._max_question_length (=26)`. I then create a one-hot-encoding of
   size `self._max_question_length (=26), self.question_word_list_length (=5747)`. Incase the question is less than 26 words it is appended with zero
@@ -87,13 +92,16 @@ Show your reasoning.**
 --------
 **4. Create sentence-level **one-hot encoding** for the answers. 10 answers are provided for each question. Encode each of them and stack together.
    Again, make sure to handle the answers not in the answer list. What is the dimension of your output tensor?**
+
 ----------
 - Each answer is one-hot-encoded to a tensor of length `(number_of_answers (=10), answer_list_length (= 5217))`
 --------
 ## Task 2: Simple Baseline (30 points)
+
 ----------
 **2.1 This paper uses 'bag-of-words' for question representation. What are the advantage and disadvantage of this type of representation? How do you
 convert the one-hot encoding loaded in question 1.9 to 'bag-of-words'?**
+
 ------
 - Advantages: Provides a very simple representation of textual data that can ecode information information about the occurence (or/and the
   frequency of occurence) of words. It is
@@ -108,6 +116,7 @@ convert the one-hot encoding loaded in question 1.9 to 'bag-of-words'?**
 --------
 **2.2 What are the 3 major components of the network used in this paper? What are the dimensions of input and output for each of them (including batch
 size)? In `student_code/simple_baseline_net.py`, implement the network structure.**
+
 ---------
 
 | Component                  | Architecture | Input | Output|
@@ -115,9 +124,11 @@ size)? In `student_code/simple_baseline_net.py`, implement the network structure
 | Image Feature Extractor    | GoogleNet | (batch_size, 3, 224, 224) | (batch_size, 1024) |
 | Question Feature Extractor | Bag-of-words | (batch_size, question_word_list_length + 1) | (batch_size, 1024)|
 | Classifier                 | Linear Layer |  (batch_size, 2048) |  (batch_size, answer_list_length + 1) |
+
 --------
 **2.4 In `student_code/simple_baseline_experiment_runner.py`, specify the arguments `question_word_to_id_map` and `answer_to_id_map` passed
 into `VqaDataset`. Explain how you are handling the training set and validation set differently.**
+
 ---------
 
 - Training dataset: Both arguments are passed as `None` so that the word-to-id mappings are created using training dataset.
@@ -126,6 +137,7 @@ into `VqaDataset`. Explain how you are handling the training set and validation 
 **2.5 In `student_code/simple_baseline_experiment_runner.py`, set up the PyTorch optimizer. In Section 3.2 of the paper, they explain that they use a
 different learning rate for word embedding layer and softmax layer. We recommend a learning rate of 0.8 for word embedding layer and 0.01 for softmax
 layer, both with SGD optimizer. Explain how this is achieved in your implementation.**
+
 --------
 
 - Pytorch's torch.optim.SGD allows for setting different learning rates for different layers of the model. I have initialized the two trainable
@@ -139,11 +151,13 @@ layer, both with SGD optimizer. Explain how this is achieved in your implementat
 **2.7 In `student_code/simple_baseline_experiment_runner.py`, implement the `_optimize` function. In Section 3.2 of the paper, they mention weight
 clip. This means to clip network weight data and gradients that have a large absolute value. We recommend a threshold of 1500 for the word embedding
 layer weights, 20 for the softmax layer weights, and 20 for weight gradients. What loss function do you use?**
+
 ------
 - cross entropy loss
 --------
 **2.9 Use Tensorboard to graph your loss and validation accuracies as you train. During validation, also log the input image, input question,
 predicted answer and ground truth answer (one example per validation is enough). This helps you validate your network output.**
+
 -------
 
 | Training loss | Validation accuracy |
@@ -154,6 +168,7 @@ predicted answer and ground truth answer (one example per validation is enough).
 | ---- | ------|----------------------------------------------------------------------------------------| ------|
 |![](student_code/out/simple/image1.png)|How many zebras are standing?| Epoch 0: 2  <br/> Epoch 1: 2<br/> Epoch 2: 2<br/> Epoch 3: 2<br/> Epoch 4: 2           | 3  |                
 |![](student_code/out/simple/image2.png)|Has the woman worn makeup? | Epoch 0: Yes <br/> Epoch 1: Yes <br/> Epoch 2: Yes <br/> Epoch 3: Yes <br/>Epoch 4: No | No |
+
 --------
 **2.10 Describe anything special about your implementation in the report. Include your figures of training loss and validation accuracy. Also show
 input, prediction and ground truth in 3 different iterations.**
@@ -178,6 +193,7 @@ input, prediction and ground truth in 3 different iterations.**
 **3.1 Set up transform used in the Co-attention paper. The transform should be similar to question 2.3, except a different input size. What is the
 input size used in the Co-Attention paper [3]? Here, we use ResNet18 as the image feature extractor as we have prepared for you.** Similar to 2.4,
 specify the arguments `question_word_to_id_map` and `answer_to_id_map` passed into `VqaDataset`.
+
 ------
 
 - Input size is (448, 448)
@@ -192,6 +208,7 @@ specify the arguments `question_word_to_id_map` and `answer_to_id_map` passed in
 | Word | A linear layer to project to a latent embedding                                                                                           |
 |Phrase| Compute 3 1-D convolutions on the latent word latent embedding with varying output sizes (1, 2 and 3) followed by a location-wise maximum |
 |Sentence| An LSTM is used to extract sentence level encoding                                                                                        |
+
 --------
 **2. What is attention? How does the co-attention mechanism work? Why do you think it can help with the VQA task?**
 
@@ -207,6 +224,7 @@ specify the arguments `question_word_to_id_map` and `answer_to_id_map` passed in
 --------
 **3. Compared to networks we use in previous assignments, the co-attention network is quite complicated. How do you modularize your code so that it is
    easy to manage and reuse?**
+
 ------------
 - I find that implementing different submodules (Question Feature Extractor and the Alternating Coattention) as separate classes
   helps with the modularity, readability and reusability of the code. For instance, in initializing the attention layers for different levels we
@@ -221,6 +239,7 @@ specify the arguments `question_word_to_id_map` and `answer_to_id_map` passed in
 --------
 **3.5 Similar to question 2.10, describe anything special about your implementation in the report. Include your figures of training loss and
 validation accuracy. Compare the performance of co-attention network to the simple baseline.**
+
 --------
 
 - While I have mostly adhered to the paper, I have used a different optimizer - Adam because it gave higher validation accuracy.
@@ -238,6 +257,7 @@ validation accuracy. Compare the performance of co-attention network to the simp
 | ---- | ------|-------------------------------------------------------------------------------------------|-----------|
 |![](student_code/out/coattention/image1.png)|How many fences are in the image?| Epoch 0: 2  <br/> Epoch 1: 2<br/> Epoch 2: 2<br/> Epoch 3: 2<br/> Epoch 4: 2              | 2         |                
 |![](student_code/out/coattention/image1.png)|What is the fence made out of? | Epoch 0: Wood <br/> Epoch 1: Wood <br/> Epoch 2: Wood <br/> Epoch 3: Wood <br/>Epoch 4: Wood | Wood         |
+
 --------
 ## Task 4: Custom Network  (20 bonus points)
 
@@ -261,6 +281,7 @@ List a few ideas you think of (at least 3, the more the better).**
 --------
 **(bonus) 4.2 Implementing at least one of the ideas. If you tweak one of your existing implementations, please copy the network to a new, clearly
 named file before changing it. Include the training loss and test accuracy graphs for your idea.**
+
 ---------
 - Coattention with cosine distance loss: I have implemented a `losses.py` where I have implemented a cosine distance function. I replace with it 
   the cross entropy loss in the
@@ -274,6 +295,7 @@ Training loss:
 
 --------
 Relevant papers
+
 --------
 [1] VQA: Visual Question Answering (Agrawal et al, 2016): https://arxiv.org/pdf/1505.00468v6.pdf
 
