@@ -1,14 +1,13 @@
 import os
-import torch
-
-from PIL import Image
-from torch.utils.data import Dataset
-from VQA.external.vqa.vqa import VQA
 import string
 from collections import Counter
-from tqdm import tqdm
+
+import torch
+from PIL import Image
+from VQA.external.vqa.vqa import VQA
+from torch.utils.data import Dataset
 from torchvision.transforms import transforms
-    
+from tqdm import tqdm
 
 
 class VqaDataset(Dataset):
@@ -18,7 +17,8 @@ class VqaDataset(Dataset):
     """
 
     def __init__(self, image_dir, question_json_file_path, annotation_json_file_path, image_filename_pattern,
-                 transform=None, question_word_to_id_map=None, answer_to_id_map=None, id_to_answer_map=None, question_word_list_length=5746, answer_list_length=5216,
+                 transform=None, question_word_to_id_map=None, answer_to_id_map=None, id_to_answer_map=None, question_word_list_length=5746,
+                 answer_list_length=5216,
                  pre_encoder=None, cache_location=None, answer_word_list=None):
         """
         Args:
@@ -50,7 +50,7 @@ class VqaDataset(Dataset):
 
         self.num_images = len(os.listdir(self._image_dir))
         self.num_questions = len(self._vqa.qqa.keys())
-        self.index_list = [str(k) for k,_ in self._vqa.qqa.items()]
+        self.index_list = [str(k) for k, _ in self._vqa.qqa.items()]
 
         # Create the question map if necessary
         if question_word_to_id_map is None:
@@ -60,8 +60,8 @@ class VqaDataset(Dataset):
             questions_dict_list = questions_info_dict['questions']
             for question_dict in tqdm(questions_dict_list):
                 sentences.append(question_dict['question'])
-                
-            question_word_list = self._create_word_list(sentences)      
+
+            question_word_list = self._create_word_list(sentences)
             question_word_to_id_map = self._create_id_map(question_word_list, self.question_word_list_length - 1)  # last index reserved for 'unknown'
             question_word_to_id_map['out_of_vocab'] = self.unknown_question_word_index
             self.question_word_to_id_map = question_word_to_id_map
@@ -82,11 +82,12 @@ class VqaDataset(Dataset):
                     answer = answer_dict['answer']
                     answer_word_list.append(answer)
 
-            answer_to_id_map, id_to_answer_map = self._create_id_map(answer_word_list, self.answer_list_length - 1, return_reversed_map=True)  # last index reserved for 'unknown'
-            
+            answer_to_id_map, id_to_answer_map = self._create_id_map(answer_word_list, self.answer_list_length - 1,
+                                                                     return_reversed_map=True)  # last index reserved for 'unknown'
+
             answer_to_id_map['out_of_vocab'] = self.unknown_answer_index
             id_to_answer_map[self.unknown_answer_index] = 'out_of_vocab'
-            
+
             self.answer_to_id_map = answer_to_id_map
             self.id_to_answer_map = id_to_answer_map
             self.answer_word_list = answer_word_list
@@ -97,7 +98,6 @@ class VqaDataset(Dataset):
             self.id_to_answer_map = id_to_answer_map
             self.answer_to_id_map = answer_to_id_map
             self.answer_word_list = answer_word_list
-
 
     def _create_word_list(self, sentences):
         """
@@ -113,14 +113,14 @@ class VqaDataset(Dataset):
             try:
                 sentence_no_punc = sentence.translate(str.maketrans('', '', string.punctuation))
             except:
-                import pdb; pdb.set_trace()
+                import pdb;
+                pdb.set_trace()
             sentence_no_punc = sentence_no_punc.lower()
             words = sentence_no_punc.split()
             word_list.extend(words)
 
         # -----------------
         return word_list
-
 
     def _create_id_map(self, word_list, max_list_length, return_reversed_map=False):
         """
@@ -135,10 +135,10 @@ class VqaDataset(Dataset):
         # ----------------- 1.5 TODO
         word_ranking = {}
         counter = Counter(word_list)
-        freq_word = counter.most_common(max_list_length) 
+        freq_word = counter.most_common(max_list_length)
         for i, word in enumerate(freq_word):
             word_ranking[word[0]] = i
-        
+
         if return_reversed_map:
             ranking_to_word = {}
             for word, rank in word_ranking.items():
@@ -147,7 +147,7 @@ class VqaDataset(Dataset):
 
         return word_ranking
         # -----------------
-    
+
     def _one_hot_encode(self, word_list, vocab_dict, max_list_length):
         """
         Returns one hot encoding of the input wordlist
@@ -169,7 +169,7 @@ class VqaDataset(Dataset):
         # ----------------- 1.8 TODO
         return self.num_questions
         # -----------------
-        
+
     def __getitem__(self, idx):
         """
         Load an item of the dataset
@@ -204,7 +204,7 @@ class VqaDataset(Dataset):
             # ----------------- 1.9 TODO
             # load the image from disk, apply self._transform (if not None)
             image_path = os.path.join(
-                    self._image_dir, self._image_filename_pattern.format(image_id))
+                self._image_dir, self._image_filename_pattern.format(image_id))
             image_PIL = Image.open(image_path).convert('RGB')
 
             if self._transform:
@@ -239,10 +239,3 @@ class VqaDataset(Dataset):
             'question': question_tensor,
             'answers': answers_tensor
         }
-
-
-
-
-
-
-

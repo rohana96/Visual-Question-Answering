@@ -1,11 +1,12 @@
 from external.vqa.vqa import VQA
+
 vqa = VQA('data/mscoco_train2014_annotations.json', 'data/OpenEnded_mscoco_train2014_questions.json')
 
 questions_info_dict = vqa.questions
 
 questions_dict_list = questions_info_dict['questions']
 for question_dict in questions_dict_list:
-    if question_dict['question_id'] == 2374130: #409380: (40500 --> 2374130)
+    if question_dict['question_id'] == 2374130:  # 409380: (40500 --> 2374130)
         print(question_dict)
 
 # {'question': 'What position is the man squatting with a glove on playing?', 

@@ -1,6 +1,8 @@
 import string
 from collections import Counter
-from student_code.vqa_dataset import VqaDataset 
+
+from student_code.vqa_dataset import VqaDataset
+
 
 def _create_id_map(word_list, max_list_length):
     """
@@ -20,6 +22,8 @@ def _create_id_map(word_list, max_list_length):
         word_ranking[word[0]] = i
     return word_ranking
     ############
+
+
 def create_word_list(sentences):
     """
     Turn a list of sentences into a list of processed words (no punctuation, lowercase, etc)
@@ -40,6 +44,7 @@ def create_word_list(sentences):
     ############
     return word_list
 
+
 def test_create_word():
     sentences = [
         "hello the! ,cute   ., we. . .",
@@ -52,13 +57,12 @@ def test_create_word():
 
 
 def test_VQADataset():
-
     dataset = VqaDataset(
-        image_dir='data/train2014', 
-        question_json_file_path ='data/OpenEnded_mscoco_train2014_questions.json',
-        annotation_json_file_path = 'data/mscoco_train2014_annotations.json', 
+        image_dir='data/train2014',
+        question_json_file_path='data/OpenEnded_mscoco_train2014_questions.json',
+        annotation_json_file_path='data/mscoco_train2014_annotations.json',
         image_filename_pattern="COCO_train2014_{}.jpg"
-        )
+    )
 
     sample = dataset[40500]
     question = sample['question']
@@ -67,6 +71,7 @@ def test_VQADataset():
     print(question[question == 1].shape)
     print(answer[0][answer[0] == 1].shape)
     print("end")
+
 
 if __name__ == "__main__":
     test_VQADataset()

@@ -7,6 +7,7 @@ class QuestionFeatureExtractor(nn.Module):
     """
     The hierarchical representation extractor as in (Lu et al, 2017) paper Sec. 3.2.
     """
+
     def __init__(self, word_inp_size, embedding_size, dropout=0.5):
         super().__init__()
         self.embedding_layer = nn.Linear(word_inp_size, embedding_size)
@@ -53,6 +54,7 @@ class AlternatingCoAttention(nn.Module):
     """
     The Alternating Co-Attention module as in (Lu et al, 2017) paper Sec. 3.3.
     """
+
     def __init__(self, d=512, k=512, dropout=0.5):
         super().__init__()
         self.d = d
@@ -102,11 +104,13 @@ class AlternatingCoAttention(nn.Module):
 
         return shat2.squeeze(), vhat.squeeze()
 
+
 class CoattentionNet(nn.Module):
     """
     Predicts an answer to a question about an image using the Hierarchical Question-Image Co-Attention
     for Visual Question Answering (Lu et al, 2017) paper.
     """
+
     def __init__(self, word_inp_size=5747, embedding_dim=512, hidden_dim=512, attention_dim=512, dim_out=1001):
         super().__init__()
         # ----------------- 3.3 TODO
@@ -121,7 +125,7 @@ class CoattentionNet(nn.Module):
         self.Wp = nn.Linear(attention_dim + hidden_dim, hidden_dim)
         self.Ws = nn.Linear(attention_dim + hidden_dim, hidden_dim)
 
-        self.dropout = None # please refer to the paper about when you should use dropout
+        self.dropout = None  # please refer to the paper about when you should use dropout
         self.classifier = nn.Linear(hidden_dim, dim_out)
         # ----------------- 
 
@@ -136,12 +140,12 @@ class CoattentionNet(nn.Module):
         qw, vw = self.word_attention_layer(Qw, image_feat)
         qp, vp = self.phrase_attention_layer(Qp, image_feat)
         qs, vs = self.sentence_attention_layer(Qs, image_feat)
-        
+
         # 3. fuse the attended features
         hw = torch.tanh(self.Ww(qw + vw))
         hp = torch.tanh(self.Wp(torch.cat([qp + vp, hw], dim=1)))
         hs = torch.tanh(self.Ws(torch.cat([qs + vs, hp], dim=1)))
-        
+
         # 4. predict the final answer using the fused feature
         out = self.classifier(hs)
         return out
@@ -151,7 +155,7 @@ class CoattentionNet(nn.Module):
 def test():
     model = CoattentionNet()
     image_feat = torch.randn(size=(10, 512))
-    question_encoding = torch.randn(size =(10, 10, 5747))
+    question_encoding = torch.randn(size=(10, 10, 5747))
     print(model(image_feat, question_encoding).shape)
 
 

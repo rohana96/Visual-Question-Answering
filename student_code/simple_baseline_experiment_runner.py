@@ -1,5 +1,7 @@
-import torch
 import sys
+
+import torch
+
 sys.path.append("./student_code")
 from simple_baseline_net import SimpleBaselineNet
 from experiment_runner_base import ExperimentRunnerBase
@@ -8,6 +10,7 @@ from torchvision.transforms import transforms
 from torch.nn.utils import clip_grad_norm_
 import sys
 import torch.optim as optim
+
 sys.path.append('..')
 
 
@@ -15,18 +18,18 @@ class SimpleBaselineExperimentRunner(ExperimentRunnerBase):
     """
     Sets up the Simple Baseline model for training. This class is specifically responsible for creating the model and optimizing it.
     """
-    def __init__(self, train_image_dir, train_question_path, train_annotation_path,
-                 test_image_dir, test_question_path,test_annotation_path, batch_size, num_epochs,
-                 num_data_loader_workers, cache_location, lr, log_validation, exp_name='simple'):
 
+    def __init__(self, train_image_dir, train_question_path, train_annotation_path,
+                 test_image_dir, test_question_path, test_annotation_path, batch_size, num_epochs,
+                 num_data_loader_workers, cache_location, lr, log_validation, exp_name='simple'):
         # ----------------- 2.3 TODO: set up transform
         # Resizing to fit network input size;
         # Normalize to [0, 1] and convert from (H, W, 3) to (3, H, W);
         # Subtract mean [0.485, 0.456, 0.406] and divide by standard deviation [0.229, 0.224, 0.225] computed from ImageNet for each channel.    
         transform = transforms.Compose([
-                transforms.Resize((224, 224)),
-                transforms.ToTensor(),
-                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 
         ])
 
@@ -62,9 +65,9 @@ class SimpleBaselineExperimentRunner(ExperimentRunnerBase):
         super().__init__(train_dataset, val_dataset, model, batch_size, num_epochs, num_data_loader_workers, exp_name=exp_name)
 
         # ----------------- 2.5 TODO: set up optimizer
-        self.optimizer = optim.SGD([ {'params': model.word_feature_extractor.parameters(), 'lr': 0.8},
-                                {'params': model.classifier.parameters(), 'lr': 0.01}], 
-                                lr=1e-3)
+        self.optimizer = optim.SGD([{'params': model.word_feature_extractor.parameters(), 'lr': 0.8},
+                                    {'params': model.classifier.parameters(), 'lr': 0.01}],
+                                   lr=1e-3)
         # -----------------
         self.criterion = torch.nn.CrossEntropyLoss()
 
@@ -82,4 +85,3 @@ class SimpleBaselineExperimentRunner(ExperimentRunnerBase):
         self._model.word_feature_extractor.weight.data.clamp_(-1500, 1500)
         return loss
         # -----------------
-    

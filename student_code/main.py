@@ -43,10 +43,10 @@ python student_code/main.py --model coattention --train_image_dir data/train2014
 
 import argparse
 import sys
+
 sys.path.append('../../VQA')
 from simple_baseline_experiment_runner import SimpleBaselineExperimentRunner
 from coattention_experiment_runner import CoattentionNetExperimentRunner
-
 
 if __name__ == "__main__":
     # Feel free to add more args, or change/remove these.
@@ -88,6 +88,3 @@ if __name__ == "__main__":
                                                 log_validation=args.log_validation,
                                                 exp_name=args.exp_name)
     experiment_runner.train()
-
-
-

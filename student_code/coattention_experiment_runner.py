@@ -1,13 +1,15 @@
 import os
+import sys
+
 import torch
 import torch.nn as nn
+import torch.optim as optim
+from torchvision.transforms import transforms
 
 from coattention_net import CoattentionNet
 from experiment_runner_base import ExperimentRunnerBase
 from vqa_dataset import VqaDataset
-from torchvision.transforms import transforms
-import sys
-import torch.optim as optim
+
 sys.path.append('..')
 from losses import cosine_distance
 
@@ -16,15 +18,16 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
     """
     Sets up the Co-Attention model for training. This class is specifically responsible for creating the model and optimizing it.
     """
+
     def __init__(self, train_image_dir, train_question_path, train_annotation_path,
-                 test_image_dir, test_question_path,test_annotation_path, batch_size, num_epochs,
+                 test_image_dir, test_question_path, test_annotation_path, batch_size, num_epochs,
                  num_data_loader_workers, cache_location, lr, log_validation, exp_name='coattention'):
 
         # ----------------- 3.1 TODO: set up transform
         transform = transforms.Compose([
-                transforms.Resize((448, 448)),
-                transforms.ToTensor(),
-                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+            transforms.Resize((448, 448)),
+            transforms.ToTensor(),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 
         ])
         # -----------------
@@ -71,8 +74,6 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
 
         self._model = CoattentionNet()
 
-
-
         super().__init__(train_dataset, val_dataset, self._model, batch_size, num_epochs,
                          num_data_loader_workers=num_data_loader_workers, log_validation=True, exp_name=exp_name)
 
@@ -95,4 +96,3 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
         self.optimizer.step()
         return loss
         # -----------------
-
