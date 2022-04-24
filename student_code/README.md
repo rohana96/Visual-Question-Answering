@@ -266,7 +266,7 @@ For 10 extra points, pick at least one method and try it out. It's okay if it do
   completely though due to time constraints.  
 
 Training loss:
-![img.png](img.png)
+![](out/cosine_coattention/cosine_coattention.png)
 
 
 ## Relevant papers
