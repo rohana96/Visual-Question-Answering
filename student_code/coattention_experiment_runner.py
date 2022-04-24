@@ -12,15 +12,15 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
     """
     Sets up the Co-Attention model for training. This class is specifically responsible for creating the model and optimizing it.
     """
-    def __init__(self, train_image_dir, train_question_path, train_annotation_path,
-                 test_image_dir, test_question_path,test_annotation_path, batch_size, num_epochs,
-                 num_data_loader_workers, cache_location, lr, log_validation):
 
+    def __init__(self, train_image_dir, train_question_path, train_annotation_path,
+                 test_image_dir, test_question_path, test_annotation_path, batch_size, num_epochs,
+                 num_data_loader_workers, cache_location, lr, log_validation):
         # ----------------- 3.1 TODO: set up transform
         transform = transforms.Compose([
-                transforms.Resize((448, 448)),
-                transforms.ToTensor(),
-                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+            transforms.Resize((448, 448)),
+            transforms.ToTensor(),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 
         ])
         # ----------------- 
@@ -42,7 +42,7 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
                                    answer_list_length=answer_list_length,
                                    cache_location=os.path.join(cache_location, "tmp_train"),
                                    # ----------------- 3.1 TODO: fill in the arguments
-                                   question_word_to_id_map=None, 
+                                   question_word_to_id_map=None,
                                    answer_to_id_map=None,
                                    answer_word_list=None,
                                    # -----------------
@@ -57,8 +57,8 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
                                  answer_list_length=answer_list_length,
                                  cache_location=os.path.join(cache_location, "tmp_val"),
                                  # ----------------- 3.1 TODO: fill in the arguments
-                                 question_word_to_id_map=train_dataset.question_word_to_id_map, 
-                                 answer_to_id_map=train_dataset.answer_to_id_map, 
+                                 question_word_to_id_map=train_dataset.question_word_to_id_map,
+                                 answer_to_id_map=train_dataset.answer_to_id_map,
                                  answer_word_list=train_dataset.answer_word_list,
                                  # -----------------
                                  pre_encoder=image_encoder)
@@ -72,12 +72,11 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
 
         self.optimizer = torch.optim.RMSprop(self._model.parameters(), lr=4e-4, weight_decay=1e-8, momentum=0.99)
         # ----------------- 
-        self.criterion = torch.nn.CrossEntropyLoss() 
+        self.criterion = torch.nn.CrossEntropyLoss()
 
     def _optimize(self, predicted_answers, true_answer_ids):
         # ----------------- 3.4 TODO: implement the optimization step
 
-        
         true_answer_ids = torch.mean(true_answer_ids, dim=1)
         loss = self.criterion(predicted_answers, true_answer_ids)
 
@@ -89,5 +88,4 @@ class CoattentionNetExperimentRunner(ExperimentRunnerBase):
         self._model.classifier.weight.data.clamp_(-20, 20)
         self._model.word_feature_extractor.weight.data.clamp_(-1500, 1500)
         return loss
-        # ----------------- 
-
+        # -----------------
