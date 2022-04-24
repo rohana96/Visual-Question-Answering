@@ -232,21 +232,15 @@ class VqaDataset(Dataset):
             answer_one_hot_list.append(answer_one_hot)
         answers_tensor = torch.cat(answer_one_hot_list, dim=0)
         # -----------------
-        if not self.visualize:
-            return {
-                'idx': idx,
-                'image': image,
-                'question': question_tensor,
-                'answers': answers_tensor
-            }
 
-        return 
-        {
-            'idx': idx, 
-            'image': image_PIL,
-            'question': question,
-            'answers': answers
+        return {
+            'idx': idx,
+            'image': image,
+            'question': question_tensor,
+            'answers': answers_tensor
         }
+
+
 
 
 
