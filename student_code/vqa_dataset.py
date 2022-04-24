@@ -18,7 +18,7 @@ class VqaDataset(Dataset):
     """
 
     def __init__(self, image_dir, question_json_file_path, annotation_json_file_path, image_filename_pattern,
-                 transform=None, question_word_to_id_map=None, answer_to_id_map=None, question_word_list_length=5746, answer_list_length=5216,
+                 transform=None, question_word_to_id_map=None, answer_to_id_map=None, id_to_answer_map=None, question_word_list_length=5746, answer_list_length=5216,
                  pre_encoder=None, cache_location=None, answer_word_list=None):
         """
         Args:
@@ -52,8 +52,6 @@ class VqaDataset(Dataset):
         self.num_questions = len(self._vqa.qqa.keys())
         self.index_list = [str(k) for k,_ in self._vqa.qqa.items()]
 
-        self.id_map_to_answer = None
-
         # Create the question map if necessary
         if question_word_to_id_map is None:
             # ----------------- 1.6 TODO
@@ -84,13 +82,19 @@ class VqaDataset(Dataset):
                     answer = answer_dict['answer']
                     answer_word_list.append(answer)
 
-            answer_to_id_map = self._create_id_map(answer_word_list, self.answer_list_length - 1)  # last index reserved for 'unknown'
+            answer_to_id_map, id_to_answer_map = self._create_id_map(answer_word_list, self.answer_list_length - 1, return_reversed_map=True)  # last index reserved for 'unknown'
+            
             answer_to_id_map['out_of_vocab'] = self.unknown_answer_index
+            id_to_answer_map[self.unknown_answer_index] = 'out_of_vocab'
+            
             self.answer_to_id_map = answer_to_id_map
+            self.id_to_answer_map = id_to_answer_map
             self.answer_word_list = answer_word_list
-            print(f"Finished creating answers map ...{len(answer_to_id_map.keys())} total answers")
+
+            print(f"Finished creating answers map: {len(answer_to_id_map.keys())} total answers")
             # -----------------
         else:
+            self.id_to_answer_map = id_to_answer_map
             self.answer_to_id_map = answer_to_id_map
             self.answer_word_list = answer_word_list
 
@@ -103,7 +107,6 @@ class VqaDataset(Dataset):
         Return:
             A list of str, words from the split, order remained.
         """
-
         # ----------------- 1.4 TODO
         word_list = []
         for sentence in sentences:
@@ -119,9 +122,7 @@ class VqaDataset(Dataset):
         return word_list
 
 
-
-
-    def _create_id_map(self, word_list, max_list_length):
+    def _create_id_map(self, word_list, max_list_length, return_reversed_map=False):
         """
         Find the most common str in a list, then create a map from str to id (its rank in the frequency)
         Args:
@@ -137,9 +138,15 @@ class VqaDataset(Dataset):
         freq_word = counter.most_common(max_list_length) 
         for i, word in enumerate(freq_word):
             word_ranking[word[0]] = i
+        
+        if return_reversed_map:
+            ranking_to_word = {}
+            for word, rank in word_ranking.items():
+                ranking_to_word[rank] = word
+            return word_ranking, ranking_to_word
+
         return word_ranking
         # -----------------
-
     
     def _one_hot_encode(self, word_list, vocab_dict, max_list_length):
         """
