@@ -47,6 +47,9 @@ if __name__ == '__main__':
                                             lr=args.lr,
                                             log_validation=False)
 
+    print(len(experiment_runner._train_dataset_loader))
+    print(len(experiment_runner._val_dataset_loader))
+
     for batch_id, batch_data in enumerate(experiment_runner._train_dataset_loader):
         print('Loading training batches {}'.format(batch_id))
     for batch_id, batch_data in enumerate(experiment_runner._val_dataset_loader):

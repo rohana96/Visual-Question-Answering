@@ -17,7 +17,7 @@ class SimpleBaselineExperimentRunner(ExperimentRunnerBase):
     """
     def __init__(self, train_image_dir, train_question_path, train_annotation_path,
                  test_image_dir, test_question_path,test_annotation_path, batch_size, num_epochs,
-                 num_data_loader_workers, cache_location, lr, log_validation):
+                 num_data_loader_workers, cache_location, lr, log_validation, exp_name='simple'):
 
         # ----------------- 2.3 TODO: set up transform
         # Resizing to fit network input size;
@@ -40,6 +40,7 @@ class SimpleBaselineExperimentRunner(ExperimentRunnerBase):
                                    question_word_to_id_map=None,
                                    answer_to_id_map=None,
                                    answer_word_list=None,
+                                   id_to_answer_map=None
                                    # -----------------
                                    )
         val_dataset = VqaDataset(image_dir=test_image_dir,
@@ -50,14 +51,15 @@ class SimpleBaselineExperimentRunner(ExperimentRunnerBase):
                                  # ----------------- 2.4 TODO: fill in the arguments
                                  question_word_to_id_map=train_dataset.question_word_to_id_map,
                                  answer_to_id_map=train_dataset.answer_to_id_map,
-                                 answer_word_list=train_dataset.answer_word_list
+                                 answer_word_list=train_dataset.answer_word_list,
+                                 id_to_answer_map=train_dataset.id_to_answer_map
                                  # -----------------
                                  )
 
         model = SimpleBaselineNet()
+        exp_name = exp_name
 
-
-        super().__init__(train_dataset, val_dataset, model, batch_size, num_epochs, num_data_loader_workers)
+        super().__init__(train_dataset, val_dataset, model, batch_size, num_epochs, num_data_loader_workers, exp_name=exp_name)
 
         # ----------------- 2.5 TODO: set up optimizer
         self.optimizer = optim.SGD([ {'params': model.word_feature_extractor.parameters(), 'lr': 0.8},
@@ -79,6 +81,5 @@ class SimpleBaselineExperimentRunner(ExperimentRunnerBase):
         self._model.classifier.weight.data.clamp_(-20, 20)
         self._model.word_feature_extractor.weight.data.clamp_(-1500, 1500)
         return loss
-
         # -----------------
     

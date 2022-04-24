@@ -1,11 +1,43 @@
 """
-Usage: python student_code/main.py --model simple --train_image_dir data/train2014 \
+------------
+Run baseline:
+------------
+
+python student_code/main.py --model simple --train_image_dir data/train2014 \
 --train_question_path data/MultipleChoice_mscoco_train2014_questions.json \
 --train_annotation_path data/mscoco_train2014_annotations.json \
 --test_image_dir data/val2014 \
 --test_question_path data/MultipleChoice_mscoco_val2014_questions.json \
 --test_annotation_path data/mscoco_val2014_annotations.json \
 --log_validation
+--exp_name simple
+
+----------------
+Run coattention:
+----------------
+
+python student_code/main.py --model coattention --train_image_dir data/train2014 \
+--train_question_path data/MultipleChoice_mscoco_train2014_questions.json \
+--train_annotation_path data/mscoco_train2014_annotations.json \
+--test_image_dir data/val2014 \
+--test_question_path data/MultipleChoice_mscoco_val2014_questions.json \
+--test_annotation_path data/mscoco_val2014_annotations.json \
+--log_validation
+--exp_name coattention
+
+
+----------------
+Run cosine coattention:
+----------------
+
+python student_code/main.py --model coattention --train_image_dir data/train2014 \
+--train_question_path data/MultipleChoice_mscoco_train2014_questions.json \
+--train_annotation_path data/mscoco_train2014_annotations.json \
+--test_image_dir data/val2014 \
+--test_question_path data/MultipleChoice_mscoco_val2014_questions.json \
+--test_annotation_path data/mscoco_val2014_annotations.json \
+--log_validation \
+--exp_name cosine_coattention
 
 """
 
@@ -27,11 +59,12 @@ if __name__ == "__main__":
     parser.add_argument('--test_question_path', type=str)
     parser.add_argument('--test_annotation_path', type=str)
     parser.add_argument('--batch_size', type=int, default=100)
-    parser.add_argument('--num_epochs', type=int, default=10)
+    parser.add_argument('--num_epochs', type=int, default=3)
     parser.add_argument('--num_data_loader_workers', type=int, default=8)
     parser.add_argument('--cache_location', type=str, default="")
     parser.add_argument('--lr', type=float, default=4e-4)
     parser.add_argument('--log_validation', action='store_true')
+    parser.add_argument('--exp_name', type=str, default='')
     args = parser.parse_args()
 
     if args.model == "simple":
@@ -52,7 +85,8 @@ if __name__ == "__main__":
                                                 num_data_loader_workers=args.num_data_loader_workers,
                                                 cache_location=args.cache_location,
                                                 lr=args.lr,
-                                                log_validation=args.log_validation)
+                                                log_validation=args.log_validation,
+                                                exp_name=args.exp_name)
     experiment_runner.train()
 
 

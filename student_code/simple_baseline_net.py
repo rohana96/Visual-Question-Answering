@@ -15,7 +15,6 @@ class SimpleBaselineNet(nn.Module):
 	    # ----------------- 2.2 TODO
 
         model =  googlenet(pretrained=True).eval() ## TODO 
-
         self.image_feature_extractor = googlenet(pretrained=True)
         self.image_feature_extractor.requires_grad = False
         self.word_feature_extractor = nn.Linear(word_in_dim, word_feature_dim)
@@ -28,7 +27,9 @@ class SimpleBaselineNet(nn.Module):
         image.cuda()
         question_encoding.cuda()
         image_feature = self.image_feature_extractor(image)[-1]
-        question_encoding = question_encoding.squeeze()
+
+        question_encoding = question_encoding.amax(dim=1)
+
         word_feature = self.word_feature_extractor(question_encoding)
         comb_feature = torch.cat([image_feature, word_feature], dim=-1)
         out = self.classifier(comb_feature)
