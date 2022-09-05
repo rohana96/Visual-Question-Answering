@@ -1,4 +1,4 @@
-# Assignment 4: Visual Question Answering with PyTorch
+Visual Question Answering with PyTorch
 
 Model checkpoints and run logs: https://drive.google.com/drive/folders/1cgssoCF1QefHnc727wcMPLKndYioRosu?usp=sharing
 
@@ -35,7 +35,7 @@ Model checkpoints and run logs: https://drive.google.com/drive/folders/1cgssoCF1
 --log_validation
 --exp_name cosine_coattention`
 
-## Task 1: Dataset (20 Points)
+## Task 1: Dataset
 
 **1.1 Which member function of the `VQA` class returns the IDs of all questions in this dataset? How many IDs are there?**
 
@@ -96,7 +96,7 @@ Show your reasoning.**
 ----------
 - Each answer is one-hot-encoded to a tensor of length `(number_of_answers (=10), answer_list_length (= 5217))`
 --------
-## Task 2: Simple Baseline (30 points)
+## Task 2: Simple Baseline
 
 ----------
 **2.1 This paper uses 'bag-of-words' for question representation. What are the advantage and disadvantage of this type of representation? How do you
@@ -186,7 +186,7 @@ input, prediction and ground truth in 3 different iterations.**
 - I have used label blending for ground truth answers when calculating loss. This allows the resultant
   label to contain information about the relative likelihood of each answer in the set of answers for a given question.
 --------
-## Task 3: Co-Attention Network (30 points)
+## Task 3: Co-Attention Network
 
 -------
 
@@ -259,7 +259,7 @@ validation accuracy. Compare the performance of co-attention network to the simp
 |![](student_code/out/coattention/image1.png)|What is the fence made out of? | Epoch 0: Wood <br/> Epoch 1: Wood <br/> Epoch 2: Wood <br/> Epoch 3: Wood <br/>Epoch 4: Wood | Wood         |
 
 --------
-## Task 4: Custom Network  (20 bonus points)
+## Task 4: Custom Network
 
 --------
 **4.1 Brainstorm some ideas for improvements to existing methods or novel ways to approach the problem.
